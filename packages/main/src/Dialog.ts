@@ -28,16 +28,15 @@ import dialogCSS from "./generated/themes/Dialog.css.js";
  */
 const STEP_SIZE = 16;
 
-type ValueStateWithIcon = ValueState.Error | ValueState.Warning | ValueState.Success | ValueState.Information;
 /**
  * Defines the icons corresponding to the dialog's state.
  */
-const ICON_PER_STATE: Record<ValueStateWithIcon, string> = {
-	[ValueState.Error]: "error",
-	[ValueState.Warning]: "alert",
-	[ValueState.Success]: "sys-enter-2",
-	[ValueState.Information]: "information",
-};
+enum IconPerState {
+	Error = "error",
+	Warning = "alert",
+	Success = "sys-enter-2",
+	Information = "information",
+}
 
 /**
  * @class
@@ -180,25 +179,6 @@ class Dialog extends Popup {
 	@property({ type: Boolean })
 	onDesktop!: boolean;
 
-	_screenResizeHandler: () => void;
-	_dragMouseMoveHandler: (e: MouseEvent) => void;
-	_dragMouseUpHandler: (e: MouseEvent) => void;
-	_resizeMouseMoveHandler: (e: MouseEvent) => void;
-	_resizeMouseUpHandler: (e: MouseEvent) => void;
-	_dragStartHandler: (e: DragEvent) => void;
-	_y?: int;
-	_x?: int;
-	_isRTL?: boolean;
-	_screenResizeHandlerAttached?: boolean;
-	_initialX?: number;
-	_initialY?: number;
-	_initialWidth?: number;
-	_initialHeight?: number;
-	_initialTop?: number;
-	_initialLeft?: number;
-	_minWidth?: number;
-	_cachedMinHeight?: number;
-
 	/**
 	 * Defines the header HTML Element.
 	 * <br><br>
@@ -223,6 +203,25 @@ class Dialog extends Popup {
 	 */
 	@slot()
 	footer!: Array<HTMLElement>;
+
+	_screenResizeHandler: () => void;
+	_dragMouseMoveHandler: (e: MouseEvent) => void;
+	_dragMouseUpHandler: (e: MouseEvent) => void;
+	_resizeMouseMoveHandler: (e: MouseEvent) => void;
+	_resizeMouseUpHandler: (e: MouseEvent) => void;
+	_dragStartHandler: (e: DragEvent) => void;
+	_y?: int;
+	_x?: int;
+	_isRTL?: boolean;
+	_screenResizeHandlerAttached?: boolean;
+	_initialX?: number;
+	_initialY?: number;
+	_initialWidth?: number;
+	_initialHeight?: number;
+	_initialTop?: number;
+	_initialLeft?: number;
+	_minWidth?: number;
+	_cachedMinHeight?: number;
 
 	constructor() {
 		super();
@@ -334,7 +333,11 @@ class Dialog extends Popup {
 	}
 
 	get _dialogStateIcon() {
-		return ICON_PER_STATE[this.state as ValueStateWithIcon];
+		if (this.state !== ValueState.None) {
+			return IconPerState[this.state];
+		}
+
+		return undefined;
 	}
 
 	get _role() {
